@@ -193,10 +193,11 @@ void Dictionary::initNgrams() {
 
 bool Dictionary::readWord(std::istream& in, std::string& word) const
 {
+  // 根据分隔符只读一个单词
   int c;
-  std::streambuf& sb = *in.rdbuf();
+  std::streambuf& sb = *in.rdbuf();  //Returns a pointer to the associated std::strstreambuf, 
   word.clear();
-  while ((c = sb.sbumpc()) != EOF) {
+  while ((c = sb.sbumpc()) != EOF) {  //Reads one character and advances the input sequence by one character.
     if (c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == '\v' ||
         c == '\f' || c == '\0') {
       if (word.empty()) {
@@ -207,7 +208,8 @@ bool Dictionary::readWord(std::istream& in, std::string& word) const
         continue;
       } else {
         if (c == '\n')
-          sb.sungetc();
+          sb.sungetc();  //If a putback position is available in the get area (gptr() > eback()), then decrements the next pointer (gptr()) and returns the character it now points to.
+          // 将最近读取的字符回流。
         return true;
       }
     }
@@ -322,6 +324,7 @@ void Dictionary::reset(std::istream& in) const {
 int32_t Dictionary::getLine(std::istream& in,
                             std::vector<int32_t>& words,
                             std::minstd_rand& rng) const {
+  // 针对的CBOW和skip-gram类型， 读上MAX_LINE_SIZE（1024）个单词
   std::uniform_real_distribution<> uniform(0, 1);
   std::string token;
   int32_t ntokens = 0;
@@ -345,6 +348,9 @@ int32_t Dictionary::getLine(std::istream& in,
 int32_t Dictionary::getLine(std::istream& in,
                             std::vector<int32_t>& words,
                             std::vector<int32_t>& labels) const {
+  // 针对的是分类模型，读到 EOS "</s>"停止。获得的是subwords和word ngrams。
+  // The newline character is used to delimit lines of text. In particular, the EOS token is appended to a line of text if a newline character is encountered. 
+  // words： 在addSubwords（非label）和addWordNgrams中被填充
   std::vector<int32_t> word_hashes;
   std::string token;
   int32_t ntokens = 0;

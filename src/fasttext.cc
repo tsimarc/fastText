@@ -330,14 +330,20 @@ void FastText::supervised(
     real lr,
     const std::vector<int32_t>& line,
     const std::vector<int32_t>& labels) {
+  // line: 读到的一行的words+ sub words + word ngrams
+  // 随便选个标签
+  // 1个训练样本
   if (labels.size() == 0 || line.size() == 0) return;
   std::uniform_int_distribution<> uniform(0, labels.size() - 1);
   int32_t i = uniform(model.rng);
+  // 在update中，line的各个单词会在computeHidden中累加平均
   model.update(line, labels[i], lr);
 }
 
 void FastText::cbow(Model& model, real lr,
                     const std::vector<int32_t>& line) {
+  // line: 读到的1024个单词
+  // size 个训练样本
   std::vector<int32_t> bow;
   std::uniform_int_distribution<> uniform(1, args_->ws);
   for (int32_t w = 0; w < line.size(); w++) {
@@ -356,7 +362,9 @@ void FastText::cbow(Model& model, real lr,
 
 void FastText::skipgram(Model& model, real lr,
                         const std::vector<int32_t>& line) {
+  // line: 读到的1024个单词
   // line已经是词汇表编号的列表。词汇表中的entry已经记录了subwords。
+  // size * boundary个训练样本
   std::uniform_int_distribution<> uniform(1, args_->ws);
   for (int32_t w = 0; w < line.size(); w++) {
     int32_t boundary = uniform(model.rng);
@@ -574,6 +582,10 @@ void FastText::analogies(int32_t k) {
 }
 
 void FastText::trainThread(int32_t threadId) {
+  // 每个线程先定位到文件输入流不同的地方。每个线程都跑上个args_->epoch * ntokens
+  // 一个while循环中supervised读到EOS为止；CBOW和skipgram读1024个单词。
+  // 读到的数据作为line投入到supervised、cbow或skipgram的model中训练。
+
   std::ifstream ifs(args_->input);
   utils::seek(ifs, threadId * utils::size(ifs) / args_->thread);
 
@@ -591,9 +603,11 @@ void FastText::trainThread(int32_t threadId) {
     real progress = real(tokenCount_) / (args_->epoch * ntokens);
     real lr = args_->lr * (1.0 - progress);
     if (args_->model == model_name::sup) {
+      // line = 单词 + sub words + word ngrams
       localTokenCount += dict_->getLine(ifs, line, labels);
       supervised(model, lr, line, labels);
     } else if (args_->model == model_name::cbow) {
+      // line = 单词
       localTokenCount += dict_->getLine(ifs, line, model.rng);
       cbow(model, lr, line);
     } else if (args_->model == model_name::sg) {
