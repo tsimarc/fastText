@@ -160,6 +160,7 @@ uint32_t Dictionary::hash(const std::string& str) const {
 void Dictionary::computeSubwords(const std::string& word,
                                std::vector<int32_t>& ngrams,
                                std::vector<std::string>* substrings) const {
+  // 词典中的每个词。每个词生成若干的ngram。substrings长度大于词汇表长度。
   for (size_t i = 0; i < word.size(); i++) {
     std::string ngram;
     if ((word[i] & 0xC0) == 0x80) continue;
@@ -181,9 +182,9 @@ void Dictionary::computeSubwords(const std::string& word,
 
 void Dictionary::initNgrams() {
   for (size_t i = 0; i < size_; i++) {
-    std::string word = BOW + words_[i].word + EOW;
+    std::string word = BOW + words_[i].word + EOW;  //如<where>
     words_[i].subwords.clear();
-    words_[i].subwords.push_back(i);
+    words_[i].subwords.push_back(i);  // words_是词汇表。词本身也作为一个subword
     if (words_[i].word != EOS) {
       computeSubwords(word, words_[i].subwords);
     }

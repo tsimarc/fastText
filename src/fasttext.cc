@@ -346,19 +346,24 @@ void FastText::cbow(Model& model, real lr,
     for (int32_t c = -boundary; c <= boundary; c++) {
       if (c != 0 && w + c >= 0 && w + c < line.size()) {
         const std::vector<int32_t>& ngrams = dict_->getSubwords(line[w + c]);
-        bow.insert(bow.end(), ngrams.cbegin(), ngrams.cend());
+        bow.insert(bow.end(), ngrams.cbegin(), ngrams.cend()); //c指的是constant
       }
     }
+    // bow是周围context各自ngrams拼接起来的整体
     model.update(bow, line[w], lr);
   }
 }
 
 void FastText::skipgram(Model& model, real lr,
                         const std::vector<int32_t>& line) {
+  // line已经是词汇表编号的列表。词汇表中的entry已经记录了subwords。
   std::uniform_int_distribution<> uniform(1, args_->ws);
   for (int32_t w = 0; w < line.size(); w++) {
     int32_t boundary = uniform(model.rng);
     const std::vector<int32_t>& ngrams = dict_->getSubwords(line[w]);
+    // 中心词作为input，有多个target，即他周围的context
+    // input已经表示成subwords的列表。
+    // 在update内部调用computeHidden，hidden即input的累加平均
     for (int32_t c = -boundary; c <= boundary; c++) {
       if (c != 0 && w + c >= 0 && w + c < line.size()) {
         model.update(ngrams, line[w + c], lr);

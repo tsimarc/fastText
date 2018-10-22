@@ -5,3 +5,7 @@
 data
 fasttext
 result
+build
+dist
+python/doc
+python/fasttext.egg-info

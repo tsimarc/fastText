@@ -239,7 +239,7 @@ void Model::update(const std::vector<int32_t>& input, int32_t target, real lr) {
     grad_.mul(1.0 / input.size());
   }
   for (auto it = input.cbegin(); it != input.cend(); ++it) {
-    wi_->addRow(grad_, *it, 1.0);
+    wi_->addRow(grad_, *it, 1.0);  // wi[*it] += 1.0 * grad， grad是Vector
   }
 }
 
