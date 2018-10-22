@@ -33,7 +33,7 @@ Model::Model(
   wi_ = wi;
   wo_ = wo;
   args_ = args;
-  osz_ = wo->size(0);
+  osz_ = wo->size(0);  // output size
   hsz_ = args->dim;
   negpos = 0;
   loss_ = 0.0;
@@ -277,7 +277,9 @@ int32_t Model::getNegative(int32_t target) {
 }
 
 void Model::buildTree(const std::vector<int64_t>& counts) {
-  tree.resize(2 * osz_ - 1);
+  // counts 已经降序
+  // tree是存放所有Node的列表，表示二叉树
+  tree.resize(2 * osz_ - 1);  // 都在叶节点。二叉树性质
   for (int32_t i = 0; i < 2 * osz_ - 1; i++) {
     tree[i].parent = -1;
     tree[i].left = -1;
@@ -290,6 +292,15 @@ void Model::buildTree(const std::vector<int64_t>& counts) {
   }
   int32_t leaf = osz_ - 1;
   int32_t node = osz_;
+  // tree的后半部分
+  /**
+   *
+   * 算法首先对输入的叶子节点进行一次排序（O(nlogn) ），
+   * 然后确定两个下标 leaf 和 node，leaf 总是指向当前最小的叶子节点，node 总是指向当前最小的非叶子节点，
+   * 所以，最小的两个节点可以从 leaf, leaf - 1, node, node + 1 四个位置中取得，
+   * 时间复杂度 O(1)，每个非叶子节点都进行一次，所以总复杂度为 O(n)，算法整体复杂度为 O(nlogn)。
+   * 参照fastText 源码分析 - Helei's Tech Notes: https://heleifz.github.io/14732610572844.html
+  */
   for (int32_t i = osz_; i < 2 * osz_ - 1; i++) {
     int32_t mini[2];
     for (int32_t j = 0; j < 2; j++) {
@@ -306,6 +317,8 @@ void Model::buildTree(const std::vector<int64_t>& counts) {
     tree[mini[1]].parent = i;
     tree[mini[1]].binary = true;
   }
+  // tree的前半部分都是叶子节点
+  // 每个叶子节点追溯parent，得到所有叶子节点的霍夫曼编码。
   for (int32_t i = 0; i < osz_; i++) {
     std::vector<int32_t> path;
     std::vector<bool> code;
