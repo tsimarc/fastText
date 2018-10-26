@@ -12,11 +12,11 @@
 #include <time.h>
 
 #include <atomic>
-#include <memory>
-#include <set>
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <queue>
+#include <set>
 #include <tuple>
 
 #include "args.h"
@@ -53,7 +53,18 @@ class FastText {
   bool quant_;
   int32_t version;
 
+  struct LabelStats {
+    int32_t gold, predicted, predictedGold;
+    LabelStats() : gold(0), predicted(0), predictedGold(0) {}
+  };
+
   void startThreads();
+  void predict(
+      int32_t,
+      const std::vector<int32_t>&,
+      std::vector<std::pair<real, int32_t>>&,
+      real = 0.0) const;
+  void printLabelStats(const std::vector<LabelStats>& labelStats) const;
 
  public:
   FastText();
@@ -61,7 +72,7 @@ class FastText {
   int32_t getWordId(const std::string&) const;
   int32_t getSubwordId(const std::string&) const;
   FASTTEXT_DEPRECATED(
-    "getVector is being deprecated and replaced by getWordVector.")
+      "getVector is being deprecated and replaced by getWordVector.")
   void getVector(Vector&, const std::string&) const;
   void getWordVector(Vector&, const std::string&) const;
   void getSubwordVector(Vector&, const std::string&) const;
@@ -95,11 +106,7 @@ class FastText {
   void quantize(const Args);
   std::tuple<int64_t, double, double> test(std::istream&, int32_t, real = 0.0);
   void predict(std::istream&, int32_t, bool, real = 0.0);
-  void predict(
-      std::istream&,
-      int32_t,
-      std::vector<std::pair<real, std::string>>&,
-      real = 0.0) const;
+  void printLabelStats(std::istream&, int32_t, real = 0.0) const;
   void ngramVectors(std::string);
   void precomputeWordVectors(Matrix&);
   void findNN(
@@ -116,4 +123,4 @@ class FastText {
   int getDimension() const;
   bool isQuant() const;
 };
-}
+} // namespace fasttext
