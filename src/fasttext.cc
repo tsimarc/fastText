@@ -329,30 +329,21 @@ void FastText::supervised(
     real lr,
     const std::vector<int32_t>& line,
     const std::vector<int32_t>& labels) {
-<<<<<<< HEAD
   // line: 读到的一行的words+ sub words + word ngrams
   // 随便选个标签
   // 1个训练样本
-  if (labels.size() == 0 || line.size() == 0) return;
-=======
   if (labels.size() == 0 || line.size() == 0) {
     return;
   }
->>>>>>> be1e597cb67c069ba9940ff241d9aad38ccd37da
   std::uniform_int_distribution<> uniform(0, labels.size() - 1);
   int32_t i = uniform(model.rng);
   // 在update中，line的各个单词会在computeHidden中累加平均
   model.update(line, labels[i], lr);
 }
 
-<<<<<<< HEAD
-void FastText::cbow(Model& model, real lr,
-                    const std::vector<int32_t>& line) {
+void FastText::cbow(Model& model, real lr, const std::vector<int32_t>& line) {
   // line: 读到的1024个单词
   // size 个训练样本
-=======
-void FastText::cbow(Model& model, real lr, const std::vector<int32_t>& line) {
->>>>>>> be1e597cb67c069ba9940ff241d9aad38ccd37da
   std::vector<int32_t> bow;
   std::uniform_int_distribution<> uniform(1, args_->ws);
   for (int32_t w = 0; w < line.size(); w++) {
@@ -369,18 +360,13 @@ void FastText::cbow(Model& model, real lr, const std::vector<int32_t>& line) {
   }
 }
 
-<<<<<<< HEAD
-void FastText::skipgram(Model& model, real lr,
-                        const std::vector<int32_t>& line) {
-  // line: 读到的1024个单词
-  // line已经是词汇表编号的列表。词汇表中的entry已经记录了subwords。
-  // size * boundary个训练样本
-=======
 void FastText::skipgram(
     Model& model,
     real lr,
     const std::vector<int32_t>& line) {
->>>>>>> be1e597cb67c069ba9940ff241d9aad38ccd37da
+  // line: 读到的1024个单词
+  // line已经是词汇表编号的列表。词汇表中的entry已经记录了subwords。
+  // size * boundary个训练样本
   std::uniform_int_distribution<> uniform(1, args_->ws);
   for (int32_t w = 0; w < line.size(); w++) {
     int32_t boundary = uniform(model.rng);

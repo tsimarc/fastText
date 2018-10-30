@@ -170,17 +170,11 @@ uint32_t Dictionary::hash(const std::string& str) const {
   return h;
 }
 
-<<<<<<< HEAD
-void Dictionary::computeSubwords(const std::string& word,
-                               std::vector<int32_t>& ngrams,
-                               std::vector<std::string>* substrings) const {
-  // 词典中的每个词。每个词生成若干的ngram。substrings长度大于词汇表长度。
-=======
 void Dictionary::computeSubwords(
     const std::string& word,
     std::vector<int32_t>& ngrams,
     std::vector<std::string>* substrings) const {
->>>>>>> be1e597cb67c069ba9940ff241d9aad38ccd37da
+  // 词典中的每个词。每个词生成若干的ngram。substrings长度大于词汇表长度。
   for (size_t i = 0; i < word.size(); i++) {
     std::string ngram;
     if ((word[i] & 0xC0) == 0x80) {
@@ -213,13 +207,8 @@ void Dictionary::initNgrams() {
   }
 }
 
-<<<<<<< HEAD
-bool Dictionary::readWord(std::istream& in, std::string& word) const
-{
-  // 根据分隔符只读一个单词
-=======
 bool Dictionary::readWord(std::istream& in, std::string& word) const {
->>>>>>> be1e597cb67c069ba9940ff241d9aad38ccd37da
+  // 根据分隔符只读一个单词
   int c;
   std::streambuf& sb = *in.rdbuf();  //Returns a pointer to the associated std::strstreambuf, 
   word.clear();
@@ -362,17 +351,11 @@ void Dictionary::reset(std::istream& in) const {
   }
 }
 
-<<<<<<< HEAD
-int32_t Dictionary::getLine(std::istream& in,
-                            std::vector<int32_t>& words,
-                            std::minstd_rand& rng) const {
-  // 针对的CBOW和skip-gram类型， 读上MAX_LINE_SIZE（1024）个单词
-=======
 int32_t Dictionary::getLine(
     std::istream& in,
     std::vector<int32_t>& words,
     std::minstd_rand& rng) const {
->>>>>>> be1e597cb67c069ba9940ff241d9aad38ccd37da
+  // 针对的CBOW和skip-gram类型， 读上MAX_LINE_SIZE（1024）个单词
   std::uniform_real_distribution<> uniform(0, 1);
   std::string token;
   int32_t ntokens = 0;
@@ -397,19 +380,13 @@ int32_t Dictionary::getLine(
   return ntokens;
 }
 
-<<<<<<< HEAD
-int32_t Dictionary::getLine(std::istream& in,
-                            std::vector<int32_t>& words,
-                            std::vector<int32_t>& labels) const {
-  // 针对的是分类模型，读到 EOS "</s>"停止。获得的是subwords和word ngrams。
-  // The newline character is used to delimit lines of text. In particular, the EOS token is appended to a line of text if a newline character is encountered. 
-  // words： 在addSubwords（非label）和addWordNgrams中被填充
-=======
 int32_t Dictionary::getLine(
     std::istream& in,
     std::vector<int32_t>& words,
     std::vector<int32_t>& labels) const {
->>>>>>> be1e597cb67c069ba9940ff241d9aad38ccd37da
+  // 针对的是分类模型，读到 EOS "</s>"停止。获得的是subwords和word ngrams。
+  // The newline character is used to delimit lines of text. In particular, the EOS token is appended to a line of text if a newline character is encountered.
+  // words： 在addSubwords（非label）和addWordNgrams中被填充
   std::vector<int32_t> word_hashes;
   std::string token;
   int32_t ntokens = 0;
