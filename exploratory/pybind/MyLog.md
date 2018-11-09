@@ -27,3 +27,10 @@ ImportError: /home/qian/project/learn/learn-nlp/fasttext/git_repo/exploratory/py
 ### 2
 
 按照教程中，把函数实现移到pybind文件中才正常。
+
+```bash
+(venv) ➜  pybind git:(master) ✗ python3 -m pybind11 --includes
+-I/home/qian/project/learn/learn-nlp/fasttext/venv/include/python3.5m -I/home/qian/project/learn/learn-nlp/fasttext/venv/include/site/python3.5
+```
+
+加入vscode的项目设置中。
