@@ -24,3 +24,6 @@ Traceback (most recent call last):
 ImportError: /home/qian/project/learn/learn-nlp/fasttext/git_repo/exploratory/pybind/example.cpython-35m-x86_64-linux-gnu.so: undefined symbol: _Z3addii
 ```
 
+### 2
+
+按照教程中，把函数实现移到pybind文件中才正常。

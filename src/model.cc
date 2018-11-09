@@ -133,9 +133,11 @@ void Model::computeHidden(const std::vector<int32_t>& input, Vector& hidden)
     if (quant_) {
       hidden.addRow(*qwi_, *it);
     } else {
+      // 累加上wi矩阵的第*it行
       hidden.addRow(*wi_, *it);
     }
   }
+    // 可见hidden是wi矩阵中若干行的平均，即输入对应的词向量。input元素即这些行的位置。可见input是one-hot的变形。
   hidden.mul(1.0 / input.size());
 }
 

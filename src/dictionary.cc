@@ -161,6 +161,7 @@ std::string Dictionary::getWord(int32_t id) const {
 // Since all fasttext models that were already released were trained
 // using signed char, we fixed the hash function to make models
 // compatible whatever compiler is used.
+// 调用处：getLine中读到的每个word、computeSubwords中生成的每个ngram
 uint32_t Dictionary::hash(const std::string& str) const {
   uint32_t h = 2166136261;
   for (size_t i = 0; i < str.size(); i++) {
@@ -175,6 +176,7 @@ void Dictionary::computeSubwords(
     std::vector<int32_t>& ngrams,
     std::vector<std::string>* substrings) const {
   // 词典中的每个词。每个词生成若干的ngram。substrings长度大于词汇表长度。
+    // 头文件中substrings默认值为nullptr
   for (size_t i = 0; i < word.size(); i++) {
     std::string ngram;
     if ((word[i] & 0xC0) == 0x80) {
